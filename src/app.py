@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User,Planets
+from models import db, User,Planets,FavoritePlanets
 #from models import Person
 
 app = Flask(__name__)
@@ -70,6 +70,25 @@ def new_planet():
     db.session.commit()
     return jsonify({"msg":"nuevo planeta creado","data":new_planet.serialize()}),201
 
+@app.route("/user/<int:id>/favorites",methods=['GET'])
+def get_favorites(id):
+    user=User.query.get(id)
+    print (user)
+    if user is None:
+        return jsonify({"msg":f"El usuario cn id {id} no existe"}),404
+    #favorite_planets=FavoritePlanets.query.filter_by(user_id=id).all()
+    # favorite_planets_serialized=[]
+    # for favorite_planet in favorite_planets:
+    #     favorite_planets_serialized.append(favorite_planet.serialize())
+    #favorite_planets_serialized=list(map(lambda planet:planet.serialize(),favorite_planets))
+    favorite_planets=db.session.query(FavoritePlanets,Planets).join(Planets).filter(FavoritePlanets.user_id==id).all()
+    print(favorite_planets)
+    favorite_planet_serialized=[]
+    for favorite_planet,planet in favorite_planets:
+        favorite_planet_serialized.append({"favorite_planet_serialized":favorite_planet.id,"planet":planet.serialize()})
+    return jsonify({"msg":"ok","data":favorite_planet_serialized})
+
+#,
 
 
 
