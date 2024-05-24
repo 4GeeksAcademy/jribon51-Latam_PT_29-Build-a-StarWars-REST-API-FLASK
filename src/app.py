@@ -148,14 +148,36 @@ def new_poeple():
 @app.route('/favorite/people/<int:people_id>',methods=["DELETE"])
 def delete_sigle_favorite_people(people_id):
     single_favorite = FavoriteCharacters.query.get(people_id)
-    print(single_favorite)
-    # if single_favorite==None:
-    #     return jsonify({"msg":"No se encontro el id {} del favorito people".format(people_id)}),400
-    # db.session.delete(single_favorite)
-    # db.session.commit()
-    return jsonify({"msg":"se elimino correctamente la persona"}),200
+    if single_favorite==None:
+        return jsonify({"msg":"No se encontro el id {} del favorito people".format(people_id)}),400
+    db.session.delete(single_favorite)
+    db.session.commit()
+    return jsonify({"msg":"se elimino correctamente el registro con id {}".format(people_id)}),200
 
+@app.route('/favorite/planet/<int:planet_id>', methods=['DELETE'])
+def get_fv_peoples(planet_id):
+    all_fps = FavoritePlanets.query.filter_by(planet_id=planet_id).first()
+    print(all_fps)
+    if all_fps is None:
+        return jsonify({"msg":"No se encontro el id {} del favorite plenets".format(id)})
+    # fps_serialized=[]
+    # for fp in all_fps:
+    #     fps_serialized.append(fp.serialize())
+    # print(fps_serialized)
+    db.session.delete(all_fps)
+    db.session.commit()
+    return jsonify({"data":"planeta favorito con id planeta {} fue eliminado con exito".format(planet_id)}), 200
 
+@app.route('/favorite/people/all/<int:people_id>',methods=["DELETE"])
+def delete_all_favorite_people(people_id):
+    single_favorite = FavoriteCharacters.query.filter_by(user_id=people_id).all()
+    print("todos las peronas",single_favorite)
+    if single_favorite==None:
+        return jsonify({"msg":"No se encontro el id {} del favorito people".format(people_id)}),400
+    for sfp in single_favorite:
+        db.session.delete(sfp)
+        db.session.commit()
+    return jsonify({"msg":"se eliminan los favoritos del usuario con id {}".format(people_id)}),200
 
 
 # this only runs if `$ python src/app.py` is executed

@@ -87,9 +87,8 @@ class FavoriteCharacters(db.Model):
     def serialize(self):
         return {
             "id": self.id,
-            "name": self.name,
-            "height": self.height,
-            "mass":self.mass,
+            "user_id": self.user_id,
+            "character_id":self.character_id,
         }
 
 
