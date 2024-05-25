@@ -180,6 +180,34 @@ def delete_all_favorite_people(people_id):
     return jsonify({"msg":"se eliminan los favoritos del usuario con id {}".format(people_id)}),200
 
 
+@app.route("/people/<int:people_id>",methods=["PUT"])
+def update_people(people_id):
+    body=request.get_json(silent=True)
+    people = Characters.query.get(people_id)
+    if  body is None:
+        return jsonify({"MSg":"debes ingresar informacion en forma de objeto "})
+    if "name" not in body:
+        return jsonify({"MSg":"no se encuentra attributo 'name' "})
+    if "height" not in body:
+        return jsonify({"MSg":"no se encuentra attributo 'height' "})
+    if "mass" not in body:
+        return jsonify({"MSg":"no se encuentra attributo 'mass' "})
+    if people is None:
+        return jsonify({"MSg":"no se encuentra el la persona con id {}".format(people_id)})
+    print("los tipos son")
+    print(type(body["name"]))
+    print(type(body["height"]))
+    print(type(body["mass"]))
+    people.name=body["name"]
+    people.height=body["height"]
+    people.mass=body["mass"]
+    db.session.commit()
+    print("se realiza actualizacion de persona")
+    return jsonify({"msg":"se actualiza la persona con id {}".format(people_id)})
+
+
+
+
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3000))
